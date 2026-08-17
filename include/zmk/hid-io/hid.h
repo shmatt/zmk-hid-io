@@ -16,7 +16,7 @@
 #if IS_ENABLED(CONFIG_ZMK_HID_IO_JOYSTICK)
 #include <zmk/hid-io/joystick.h>
 #include <zmk/hid-io/hid_joystick.h>
-#define ZMK_HID_JOYSTICK_NUM_BUTTONS 0x08
+#define ZMK_HID_JOYSTICK_NUM_BUTTONS 0x20
 #define ZMK_HID_REPORT_ID__IO_JOYSTICK 0x02
 #endif // IS_ENABLED(CONFIG_ZMK_HID_IO_JOYSTICK)
 
@@ -81,7 +81,7 @@ static const uint8_t zmk_hid_report_desc_alt[] = {
     HID_LOGICAL_MIN8(0x00),
     HID_LOGICAL_MAX8(0x01),
     HID_REPORT_SIZE(0x01),
-    HID_REPORT_COUNT(0x8),
+    HID_REPORT_COUNT(0x20),
     HID_INPUT(ZMK_HID_MAIN_VAL_DATA | ZMK_HID_MAIN_VAL_VAR | ZMK_HID_MAIN_VAL_ABS),
     HID_END_COLLECTION,
     HID_END_COLLECTION,

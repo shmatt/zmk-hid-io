@@ -25,13 +25,13 @@ static struct zmk_hid_joystick_report_alt joystick_report_alt = {
 
 // Keep track of how often a button was pressed.
 // Only release the button if the count is 0.
-static int explicit_joy2_btn_counts[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-static zmk_mod_flags_t explicit_joy2_btns = 0;
+static int explicit_joy2_btn_counts[ZMK_HID_JOYSTICK_NUM_BUTTONS];
+static zmk_joystick_button_flags_t explicit_joy2_btns = 0;
 
 #define SET_JOYSTICK_BUTTONS(btns)                                                                 \
     {                                                                                              \
         joystick_report_alt.body.buttons = btns;                                                   \
-        LOG_DBG("JOYSTICK Buttons set to 0x%02X", joystick_report_alt.body.buttons);                        \
+        LOG_DBG("JOYSTICK Buttons set to 0x%08X", joystick_report_alt.body.buttons);                        \
     }
 
 int zmk_hid_joy2_button_press(zmk_joystick_button_t button) {
