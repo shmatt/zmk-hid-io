@@ -13,13 +13,28 @@
 LOG_MODULE_DECLARE(hid_io, CONFIG_ZMK_HID_IO_LOG_LEVEL);
 
 #include <zmk/hid-io/endpoints.h>
+
+/* ZMK renamed this accessor part-way through its 3.5 era: older trees (such
+ * as the shmatt/zmk feat/mouse-keys-3.2 branch this is built against) expose
+ * zmk_endpoints_selected(), newer ones zmk_endpoint_get_selected(). Both
+ * return the same struct, so pick whichever the tree actually has --
+ * otherwise the call is implicitly declared as returning int and the struct
+ * initialisation fails with "invalid initializer".
+ *
+ * The same flag also gates ZMK_TRANSPORT_NONE, an enum value newer ZMK
+ * added to enum zmk_transport that older trees do not have. */
+#if defined(CONFIG_ZMK_HID_IO_LEGACY_ENDPOINT_API)
+#define ZMK_HID_IO_ENDPOINT_SELECTED zmk_endpoints_selected
+#else
+#define ZMK_HID_IO_ENDPOINT_SELECTED zmk_endpoint_get_selected
+#endif
 #include <zmk/hid-io/hid.h>
 #include <zmk/hid-io/usb_hid.h>
 #include <zmk/hid-io/hog.h>
 
 #if IS_ENABLED(CONFIG_ZMK_HID_IO_JOYSTICK)
 int zmk_endpoints_send_joystick_report_alt() {
-    struct zmk_endpoint_instance current_instance = zmk_endpoint_get_selected();
+    struct zmk_endpoint_instance current_instance = ZMK_HID_IO_ENDPOINT_SELECTED();
 
     switch (current_instance.transport) {
 #if IS_ENABLED(CONFIG_ZMK_USB)
@@ -47,10 +62,12 @@ int zmk_endpoints_send_joystick_report_alt() {
     case ZMK_TRANSPORT_BLE: break;
 #endif /* IS_ENABLED(CONFIG_ZMK_BLE) */
 
+#if !defined(CONFIG_ZMK_HID_IO_LEGACY_ENDPOINT_API)
     case ZMK_TRANSPORT_NONE:  {
         LOG_ERR("Current endpoint transport: NONE");
         return 0;
     }
+#endif
 
     }
 
@@ -62,7 +79,7 @@ int zmk_endpoints_send_joystick_report_alt() {
 
 #if IS_ENABLED(CONFIG_ZMK_HID_IO_MOUSE)
 int zmk_endpoints_send_mouse_report_alt() {
-    struct zmk_endpoint_instance current_instance = zmk_endpoint_get_selected();
+    struct zmk_endpoint_instance current_instance = ZMK_HID_IO_ENDPOINT_SELECTED();
 
     switch (current_instance.transport) {
 #if IS_ENABLED(CONFIG_ZMK_USB)
@@ -90,7 +107,9 @@ int zmk_endpoints_send_mouse_report_alt() {
     case ZMK_TRANSPORT_BLE: break;
 #endif /* IS_ENABLED(CONFIG_ZMK_BLE) */
 
+#if !defined(CONFIG_ZMK_HID_IO_LEGACY_ENDPOINT_API)
     case ZMK_TRANSPORT_NONE: return 0;
+#endif
     }
 
     LOG_ERR("Unsupported endpoint transport %d", current_instance.transport);
@@ -101,7 +120,7 @@ int zmk_endpoints_send_mouse_report_alt() {
 
 #if IS_ENABLED(CONFIG_ZMK_HID_IO_VOLUME_KNOB)
 int zmk_endpoints_send_volume_knob_report_alt() {
-    struct zmk_endpoint_instance current_instance = zmk_endpoint_get_selected();
+    struct zmk_endpoint_instance current_instance = ZMK_HID_IO_ENDPOINT_SELECTED();
 
     switch (current_instance.transport) {
 #if IS_ENABLED(CONFIG_ZMK_USB)
@@ -129,7 +148,9 @@ int zmk_endpoints_send_volume_knob_report_alt() {
     case ZMK_TRANSPORT_BLE: break;
 #endif /* IS_ENABLED(CONFIG_ZMK_BLE) */
 
+#if !defined(CONFIG_ZMK_HID_IO_LEGACY_ENDPOINT_API)
     case ZMK_TRANSPORT_NONE: return 0;
+#endif
     }
 
     LOG_ERR("Unsupported endpoint transport %d", current_instance.transport);

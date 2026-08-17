@@ -5,6 +5,15 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+config ZMK_HID_IO_LEGACY_ENDPOINT_API
+    bool "Target a ZMK tree with the pre-rename endpoint API"
+    # Two differences, both present in older trees such as shmatt/zmk
+    # feat/mouse-keys-3.2 and absent from newer ZMK:
+    #   * the selected-endpoint accessor is zmk_endpoints_selected() rather
+    #     than zmk_endpoint_get_selected()
+    #   * enum zmk_transport has no ZMK_TRANSPORT_NONE member
+    default n
+
 config ZMK_HID_IO
     bool "Enable HID I/O"
     default n
